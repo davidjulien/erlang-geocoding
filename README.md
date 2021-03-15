@@ -1,4 +1,4 @@
-Geocoding does not rely on any external API. It relies on an internal (huge) database locations of 156707 coordinates corresponding to cities of more than 500 inhabitants (see `Data sources` for more details).
+**Geocoding does not rely on any external API**. It relies on an internal (huge) database of 156707 coordinates corresponding to cities of more than 500 inhabitants (see `Data sources` for more details).
 
 ## Installation
 
@@ -29,10 +29,9 @@ ok
 
 ### Algorithm
 
-Reverse geocoding is done thanks to a k-d tree algorithm. We use Martin F. Krafft implementation. Original source code is here: https://github.com/kbranigan/libkdtree/tree/master/kdtree%2B%2B
-It is embeded in an erlang driver.
+Reverse geocoding is done thanks to a k-d tree algorithm. We use Martin F. Krafft implementation. Original source code is here: https://github.com/kbranigan/libkdtree/tree/master/kdtree%2B%2B . It is embeded in an erlang driver.
 
-From latitude/longitude coordinates, geocoding finds the nearest point in our location database. Associated data are returned and a distance between provided coordinatates and real coordinates. Since search relies only on coordinates, strange behaviour may occured when a big city is near a small one: a point inside the large city and near border may be associated to the small city because the small city coordinates will be nearest than the big city coordinates.
+From latitude/longitude coordinates, geocoding finds the nearest point in our locations database. Associated data are returned, as weel as a distance between provided coordinates and real coordinates. Since reverse geocoding relies only on coordinates, strange behaviour may occured when a big city is near a small one: a point inside the large city and near its border may be associated to the small city because the small city coordinates will be nearest than the big city coordinates.
 
 ### Data sources
 
