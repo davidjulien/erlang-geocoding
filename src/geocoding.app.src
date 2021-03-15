@@ -1,0 +1,11 @@
+{application, geocoding, [
+  {description,   "Geocoding application"},
+  {vsn, "0.1.0"},
+  {id,            "geocoding"},
+  {modules,       [geocoding, geocoding_app, geocoding_sup]},
+  {registered,    [geocoding, geocoding_sup]},
+  {applications,  [kernel, stdlib]},
+  {mod,           {geocoding_app, []}},
+  {maintainers, ["David JULIEN"]},
+  {licenses, ["BSD"]}
+]}.
