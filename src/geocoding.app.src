@@ -7,5 +7,6 @@
   {applications,  [kernel, stdlib]},
   {mod,           {geocoding_app, []}},
   {maintainers, ["David JULIEN"]},
-  {licenses, ["BSD"]}
+  {licenses, ["BSD"]},
+  {links, [{"GitHub", "https://github.com/davidjulien/erlang-geocoding"}]}
 ]}.
