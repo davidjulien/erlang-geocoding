@@ -6,6 +6,7 @@
 
 -export([
          distance/2,
+         reverse/1,
          reverse/2
         ]).
 
@@ -61,6 +62,11 @@
 %%% @doc Find a city from latitude/longitude coordinates
 -spec reverse(float(), float()) -> {ok, {continent(), country(), unicode:unicode_binary(), float()}} | {error, any()}.
 reverse(Latitude, Longitude) ->
+  reverse({Latitude, Longitude}).
+
+%%% @doc Find a city from latitude/longitude coordinates
+-spec reverse({float(), float()}) -> {ok, {continent(), country(), unicode:unicode_binary(), float()}} | {error, any()}.
+reverse({Latitude, Longitude}) ->
   gen_server:call(?MODULE, {reverse, Latitude, Longitude}, ?TIMEOUT).
 
 %%% @doc Compute distance between 2 coordinates (result in meters)

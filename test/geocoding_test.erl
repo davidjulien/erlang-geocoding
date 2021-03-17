@@ -27,8 +27,15 @@ reverse_test_() ->
    end,
    fun(_) ->
        [
+        % Verify that the 2 APIs of reverse return the same result
+        ?_test(begin
+                 Result1 = geocoding:reverse(?PARIS),
+                 Result2 = geocoding:reverse(element(1, ?PARIS), element(2, ?PARIS)),
+                 ?assertEqual(Result1, Result2)
+               end),
+
         % Center of Paris
-        ?_assertMatch({ok, {europe, fr, <<"Paris">>, Distance}} when Distance < 10000, geocoding:reverse(48.857929, 2.346707)),
+        ?_assertMatch({ok, {europe, fr, <<"Paris">>, Distance}} when Distance < 10000, geocoding:reverse(?PARIS)),
         % Parc monceau (Paris) but Levallois-Perret center is nearest than Paris center
         ?_assertMatch({ok, {europe, fr, <<"Levallois-Perret">>, Distance}} when Distance < 10000, geocoding:reverse(48.878995, 2.307327)),
 
@@ -59,5 +66,7 @@ reverse_test_() ->
 distance_test_() ->
   [
    ?_assertMatch(5832947, geocoding:distance(?PARIS, ?NEW_YORK)),
+
+   % 2 local points at Saint-Germain-en-Laye, France
    ?_assertMatch(2188, geocoding:distance({48.900666021262744, 2.066405553816917}, {48.89826633730442, 2.0961015091251927}))
   ].
