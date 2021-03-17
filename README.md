@@ -23,6 +23,10 @@ Eshell V11.1.8  (abort with ^G)
 ok
 2> geocoding:reverse(48.857929, 2.346707).
 {ok,{europe,fr,<<"Paris">>,525.451956}}
+3> geocoding:reverse({48.857929, 2.346707}).
+{ok,{europe,fr,<<"Paris">>,525.451956}}
+4> geocoding:distance({48.857929, 2.346707}).
+5832947
 ```
 
 ## Technical information
