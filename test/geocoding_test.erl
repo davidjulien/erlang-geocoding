@@ -1,6 +1,9 @@
 -module(geocoding_test).
 -include_lib("eunit/include/eunit.hrl").
 
+-define(PARIS, {48.857929, 2.346707}).
+-define(NEW_YORK, {40.7630463, -73.973527}).
+
 start() ->
   {ok, _} = geocoding:start_link().
 
@@ -52,3 +55,9 @@ reverse_test_() ->
        ]
    end
   }.
+
+distance_test_() ->
+  [
+   ?_assertMatch(5832947, geocoding:distance(?PARIS, ?NEW_YORK)),
+   ?_assertMatch(2188, geocoding:distance({48.900666021262744, 2.066405553816917}, {48.89826633730442, 2.0961015091251927}))
+  ].

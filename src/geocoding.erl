@@ -5,6 +5,7 @@
 -behaviour(gen_server).
 
 -export([
+         distance/2,
          reverse/2
         ]).
 
@@ -50,10 +51,30 @@
 -define(EXTERNAL_DRIVER, "geocoding_drv").
 -define(CITIES_DATA_FILE, "cities.txt").
 
+-define(DEG_TO_RAD, 0.017453292519943295769236907684886).
+-define(EARTH_RADIUS_IN_METERS, 6372797.560856).
+
+%% ========================================================================= %%
+%% API
+%% ========================================================================= %%
+
 %%% @doc Find a city from latitude/longitude coordinates
 -spec reverse(float(), float()) -> {ok, {continent(), country(), unicode:unicode_binary(), float()}} | {error, any()}.
 reverse(Latitude, Longitude) ->
   gen_server:call(?MODULE, {reverse, Latitude, Longitude}, ?TIMEOUT).
+
+%%% @doc Compute distance between 2 coordinates (result in meters)
+-spec distance({float(), float()}, {float(), float()}) -> integer().
+distance({FromLatitude, FromLongitude}, {ToLatitude, ToLongitude}) ->
+  LatitudeArc = (FromLatitude - ToLatitude) * ?DEG_TO_RAD,
+  LongitudeArc = (FromLongitude - ToLongitude) * ?DEG_TO_RAD,
+  LatitudeH = math:sin(LatitudeArc / 2.0),
+  LatitudeH2 = LatitudeH * LatitudeH,
+  LongitudeH = math:sin(LongitudeArc / 2.0),
+  LongitudeH2 = LongitudeH * LongitudeH,
+  Tmp = math:cos(FromLatitude*?DEG_TO_RAD) * math:cos(ToLatitude * ?DEG_TO_RAD),
+  round(?EARTH_RADIUS_IN_METERS * 2.0 * math:asin(math:sqrt(LatitudeH2 + Tmp*LongitudeH2))).
+
 
 %% ========================================================================= %%
 %% supervisor API
