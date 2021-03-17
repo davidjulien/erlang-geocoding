@@ -89,7 +89,7 @@ do_stop() ->
   gen_server:call(?MODULE, do_stop, ?TIMEOUT).
 
 %%--------------------------------------------------------------------
-%% @doc Start the link grammar parser application server.
+%% @doc Start the application server.
 %% This method is called from the supervisor.
 %%
 -spec start_link() -> {ok, pid()} | {error, any()}.
