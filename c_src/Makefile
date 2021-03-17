@@ -30,7 +30,7 @@ all : ${TARGET}
 	cp ${TARGET} ../priv/
 
 clean :
-	rm -rf ${TARGET_DIR}/*.o ${TARGET_DIR}/kdtree++/*.[od] ${TARGET}
+	rm -rf ${TARGET_DIR}/*.o ${TARGET_DIR}/kdtree++/*.[od] ${TARGET} ../priv/${TARGET}
 
 ${TARGET_DIR}/%.o : ${SRC_DIR}/%.cpp ${TARGET_DIR}
 	${CC} ${CFLAGS} ${CPPFLAGS} -o $@ -c $<
