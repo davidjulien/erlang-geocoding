@@ -6,6 +6,7 @@
 
 -export([
          distance/2,
+         lookup/2,
          reverse/1,
          reverse/2
         ]).
@@ -30,16 +31,30 @@
 %% RECORDS AND TYPES
 %% ========================================================================= %%
 
--record(state,
-        {
-         port :: port() | undefined
-        }).
-
 %% 7 continents model (except we replace australia with oceania to include all pacific islands).
 -type continent() :: antarctica | africa | asia | europe | north_america | oceania | south_america.
 
-%% Maybe list all ISO-3166 country codes
--type country() :: atom().
+% 242 countries
+-type country_iso3166() :: 'AD' | 'AE' | 'AF' | 'AG' | 'AI' | 'AL' | 'AM' | 'AO' | 'AQ' | 'AR' | 'AS' | 'AT' | 'AU' | 'AW' | 'AX' | 'AZ' | 'BA' | 'BB' | 'BD' | 'BE' | 'BF' | 'BG' | 'BH' | 'BI' | 'BJ' | 'BL' | 'BM' | 'BN' | 'BO' | 'BQ' | 'BR' | 'BS' | 'BT' | 'BW' | 'BY' | 'BZ' | 'CA' | 'CD' | 'CF' | 'CG' | 'CH' | 'CI' | 'CK' | 'CL' | 'CM' | 'CN' | 'CO' | 'CR' | 'CU' | 'CV' | 'CW' | 'CX' | 'CY' | 'CZ' | 'DE' | 'DJ' | 'DK' | 'DM' | 'DO' | 'DZ' | 'EC' | 'EE' | 'EG' | 'EH' | 'ER' | 'ES' | 'ET' | 'FI' | 'FJ' | 'FK' | 'FM' | 'FO' | 'FR' | 'GA' | 'GB' | 'GD' | 'GE' | 'GF' | 'GG' | 'GH' | 'GI' | 'GL' | 'GM' | 'GN' | 'GP' | 'GQ' | 'GR' | 'GT' | 'GU' | 'GW' | 'GY' | 'HK' | 'HN' | 'HR' | 'HT' | 'HU' | 'ID' | 'IE' | 'IL' | 'IM' | 'IN' | 'IQ' | 'IR' | 'IS' | 'IT' | 'JE' | 'JM' | 'JO' | 'JP' | 'KE' | 'KG' | 'KH' | 'KI' | 'KM' | 'KN' | 'KP' | 'KR' | 'KW' | 'KY' | 'KZ' | 'LA' | 'LB' | 'LC' | 'LI' | 'LK' | 'LR' | 'LS' | 'LT' | 'LU' | 'LV' | 'LY' | 'MA' | 'MC' | 'MD' | 'ME' | 'MF' | 'MG' | 'MH' | 'MK' | 'ML' | 'MM' | 'MN' | 'MO' | 'MP' | 'MQ' | 'MR' | 'MS' | 'MT' | 'MU' | 'MV' | 'MW' | 'MX' | 'MY' | 'MZ' | 'NA' | 'NC' | 'NE' | 'NF' | 'NG' | 'NI' | 'NL' | 'NO' | 'NP' | 'NR' | 'NU' | 'NZ' | 'OM' | 'PA' | 'PE' | 'PF' | 'PG' | 'PH' | 'PK' | 'PL' | 'PM' | 'PR' | 'PS' | 'PT' | 'PW' | 'PY' | 'QA' | 'RE' | 'RO' | 'RS' | 'RU' | 'RW' | 'SA' | 'SB' | 'SC' | 'SD' | 'SE' | 'SG' | 'SH' | 'SI' | 'SJ' | 'SK' | 'SL' | 'SM' | 'SN' | 'SO' | 'SR' | 'SS' | 'ST' | 'SV' | 'SX' | 'SY' | 'SZ' | 'TC' | 'TD' | 'TG' | 'TH' | 'TJ' | 'TK' | 'TL' | 'TM' | 'TN' | 'TO' | 'TR' | 'TT' | 'TV' | 'TW' | 'TZ' | 'UA' | 'UG' | 'US' | 'UY' | 'UZ' | 'VA' | 'VC' | 'VE' | 'VG' | 'VI' | 'VN' | 'VU' | 'WF' | 'WS' | 'XK' | 'YE' | 'YT' | 'ZA' | 'ZM' | 'ZW'.
+
+% Geonameid, to retrieve easily all data related to a location
+-type geonameid() :: non_neg_integer().
+
+% City name
+-type city_name() :: unicode:unicode_binary().
+
+% Coordinates latitude/longitude
+-type coordinates() :: {float(), float()}.
+
+% Full city info in our database
+-type city_info() :: {geonameid(), coordinates(), continent(), country_iso3166(), city_name()}.
+
+-record(state,
+        {
+         countrycity_tree :: gb_trees:tree({country_iso3166(), city_name()}, city_info()),
+         port :: port() | undefined
+        }).
+
 
 %% ========================================================================= %%
 %% CONSTANTS
@@ -60,12 +75,12 @@
 %% ========================================================================= %%
 
 %%% @doc Find a city from latitude/longitude coordinates
--spec reverse(float(), float()) -> {ok, {continent(), country(), unicode:unicode_binary(), float()}} | {error, any()}.
+-spec reverse(float(), float()) -> {ok, {continent(), country_iso3166(), unicode:unicode_binary(), float()}} | {error, any()}.
 reverse(Latitude, Longitude) ->
   reverse({Latitude, Longitude}).
 
 %%% @doc Find a city from latitude/longitude coordinates
--spec reverse({float(), float()}) -> {ok, {continent(), country(), unicode:unicode_binary(), float()}} | {error, any()}.
+-spec reverse({float(), float()}) -> {ok, {continent(), country_iso3166(), unicode:unicode_binary(), float()}} | {error, any()}.
 reverse({Latitude, Longitude}) ->
   gen_server:call(?MODULE, {reverse, Latitude, Longitude}, ?TIMEOUT).
 
@@ -80,6 +95,11 @@ distance({FromLatitude, FromLongitude}, {ToLatitude, ToLongitude}) ->
   LongitudeH2 = LongitudeH * LongitudeH,
   Tmp = math:cos(FromLatitude*?DEG_TO_RAD) * math:cos(ToLatitude * ?DEG_TO_RAD),
   round(?EARTH_RADIUS_IN_METERS * 2.0 * math:asin(math:sqrt(LatitudeH2 + Tmp*LongitudeH2))).
+
+%%% @doc Lookup coordinates from country code and city name
+-spec lookup(country_iso3166(), city_name()) -> {ok, {geonameid(), coordinates(), continent(), country_iso3166(), city_name()}}.
+lookup(CountryISO3166, CityName) ->
+  gen_server:call(?MODULE, {lookup, CountryISO3166, CityName}, ?TIMEOUT).
 
 
 %% ========================================================================= %%
@@ -111,15 +131,16 @@ start_link() ->
 %% 
 -spec init(list()) -> {ok, #state{}}.
 init(_Args) ->
-  {ok, #state{port = undefined}}.
+  CountryCityTree = init_tree_from_file(),
+  {ok, #state{port = undefined, countrycity_tree = CountryCityTree}}.
 
 %% @doc Handle a synchronous message.
-handle_call(do_stop, _From, #state{port = Port} = _State) ->
+handle_call(do_stop, _From, #state{port = Port} = State) ->
   case Port of
     undefined -> ok;
     _ -> close_port_to_external_driver(Port)
   end,
-  {stop, normal, stopped, #state{port = undefined}};
+  {stop, normal, stopped, State#state{port = undefined}};
 handle_call({reverse, Latitude, Longitude}, _From, #state{port = Port_0} = State) ->
   Port_1 = case Port_0 of 
              undefined -> open_port_to_external_driver();
@@ -135,7 +156,13 @@ handle_call({reverse, Latitude, Longitude}, _From, #state{port = Port_0} = State
                         {{error, V}, undefined}
                     end,
   NewState = State#state{port = Port_2},
-  {reply, Reply, NewState}.
+  {reply, Reply, NewState};
+handle_call({lookup, CountryISO3166, CityName}, _From, #state{countrycity_tree = CountryCityTree} = State) ->
+  Result = case gb_trees:lookup({CountryISO3166, string:lowercase(CityName)}, CountryCityTree) of
+    none -> none;
+    {value, V} -> {ok, V}
+  end,
+  {reply, Result, State}.
 
 %% @doc Handle an asynchronous message.
 handle_cast(none, State) ->
@@ -164,7 +191,7 @@ terminate(_Reason, #state{port = Port}) ->
 %% ========================================================================= %%
 
 %% @doc Reverse latitude/longitude coordinates to continent/country/city and distance between provided coordinates and official cooordinates of identified location.
--spec do_reverse(port(), float(), float()) -> {continent(), country(), unicode:unicode_binary(), float()}.
+-spec do_reverse(port(), integer() | float(), integer() | float()) -> {continent(), country_iso3166(), unicode:unicode_binary(), float()}.
 do_reverse(Port, Latitude, Longitude) ->
   LatitudeF = if
                 is_integer(Latitude) -> Latitude * 1.0;
@@ -200,7 +227,42 @@ do_reverse(Port, Latitude, Longitude) ->
    list_to_float(binary_to_list(DistanceStr))
   }.                
 
+-spec init_tree_from_file() -> gb_trees:tree({country_iso3166(), unicode:unicode_binary()}, city_info()).
+init_tree_from_file() ->
+  Path = path_to_external_driver(),
+  DataFilePath = filename:join(Path, ?CITIES_DATA_FILE),
+  {ok, Data} = file:read_file(DataFilePath),
+  Lines = binary:split(Data, [<<"\n">>], [global]),
+  lists:foldl(fun(Line, AccTree) ->
+                  if Line =:= <<>> -> % Last line is empty
+                       AccTree;
+                     true ->
+                       [GeonameIdStr, LatitudeStr, LongitudeStr, ContinentStr, CountryCodeStr, CityName] = binary:split(Line, [<<"\t">>], [global]),
+                       try
+                         GeonameId = binary_to_integer(GeonameIdStr),
+                         Latitude = to_float(LatitudeStr),
+                         Longitude = to_float(LongitudeStr),
+                         Continent = binary_to_atom(ContinentStr, 'utf8'),
+                         CountryCode = binary_to_atom(CountryCodeStr, 'utf8'),
+                         gb_trees:insert({CountryCode, string:lowercase(CityName)}, {GeonameId, {Latitude, Longitude}, Continent, CountryCode, CityName}, AccTree)
+                       catch
+                         error:{key_exists, _} ->
+                           % In some countries, you may have multiple cities with same name
+                           AccTree;
+                         E:V ->
+                           error_logger:info_msg("Unable to insert ~s:~10000p", [Line, {E,V}]),
+                           AccTree
+                       end
+                  end
+              end, gb_trees:empty(), Lines).
 
+to_float(Str) ->
+  try
+    binary_to_float(Str)
+  catch
+    error:badarg ->
+      binary_to_integer(Str) * 1.0
+  end.
 
 %% ========================================================================= %%
 %% Communication with driver

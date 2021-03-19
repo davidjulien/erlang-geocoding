@@ -63,6 +63,25 @@ reverse_test_() ->
    end
   }.
 
+lookup_test_() ->
+  {setup,
+   fun() ->
+       start()
+   end,
+   fun(_) ->
+       stop()
+   end,
+   fun(_) ->
+       [
+        ?_assertMatch({ok,{2988507, {48.85341, 2.3488}, europe, 'FR', <<"Paris">>}}, geocoding:lookup('FR', <<"Paris">>)),
+
+        % Lookup is caseless
+        ?_assertMatch({ok,{2988507, {48.85341, 2.3488}, europe, 'FR', <<"Paris">>}}, geocoding:lookup('FR', <<"paris">>))
+       ]
+   end
+  }.
+
+
 distance_test_() ->
   [
    ?_assertMatch(5832947, geocoding:distance(?PARIS, ?NEW_YORK)),
