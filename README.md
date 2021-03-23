@@ -1,6 +1,6 @@
 **Geocoding does not rely on any external API**. It relies on an internal (huge) database of 156707 coordinates corresponding to cities of more than 500 inhabitants (see `Data sources` for more details).
 
-## Installation
+## Compile, test and try
 
 Compilation:
 
@@ -34,7 +34,7 @@ ok
 
 ## Installation
 
-`rebar3`:
+Erlang (`rebar3`):
 ```
 {deps, [
   {geocoding, "0.3.0"}}
@@ -42,7 +42,7 @@ ok
 ```
 
 
-Elixir:
+Elixir (`mix`):
 ```
 defp deps do
   [
