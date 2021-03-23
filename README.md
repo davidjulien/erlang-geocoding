@@ -37,7 +37,7 @@ ok
 `rebar3`:
 ```
 {deps, [
-  {geocoding, "0.2.0"}}
+  {geocoding, "0.3.0"}}
 ]}
 ```
 
@@ -46,7 +46,7 @@ Elixir:
 ```
 defp deps do
   [
-    {:geocoding, "~> 0.2.0"}
+    {:geocoding, "~> 0.3.0"}
   ]
 end
 
