@@ -27,6 +27,24 @@ ok
 5832947
 ```
 
+## Installation
+
+`rebar3`:
+```
+{deps, [
+  {geocoding, "0.2.0"}}
+]}
+```
+
+
+Elixir:
+```
+defp deps do
+  [
+    {:geocoding, "~> 0.2.0"}
+  ]
+end
+
 ## Technical information
 
 ### Algorithm
