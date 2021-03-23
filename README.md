@@ -21,10 +21,15 @@ Erlang/OTP 23 [erts-11.1.8] [source] [64-bit] [smp:12:12] [ds:12:12:10] [async-t
 Eshell V11.1.8  (abort with ^G)
 1> application:start(geocoding).
 ok
+
 2> geocoding:reverse(48.857929, 2.346707).
 {ok,{europe,fr,<<"Paris">>,525.451956}}
+
 3> geocoding:distance({48.857929, 2.346707}, {40.7630463, -73.973527}).
 5832947
+
+4> geocoding:lookup('FR', <<"paris">>).
+{ok,{2988507,{48.85341,2.3488},europe,'FR',<<"Paris">>}}
 ```
 
 ## Installation
