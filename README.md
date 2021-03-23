@@ -49,6 +49,7 @@ defp deps do
     {:geocoding, "~> 0.3.0"}
   ]
 end
+```
 
 ## Technical information
 
