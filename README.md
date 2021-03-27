@@ -1,4 +1,11 @@
-**Geocoding does not rely on any external API**. It relies on an internal (huge) database of 156707 coordinates corresponding to cities of more than 500 inhabitants (see `Data sources` for more details).
+**Geocoding does not rely on any external API**. It relies on an internal (huge) database of 156710 coordinates corresponding to cities of more than 500 inhabitants (see `Data sources` for more details).
+
+## Release notes
+
+- (v0.3.1): add a script to rebuild `cities.txt` internal database with up-to-date data from https://geonames.org
+- (v0.3.0): lookup city information from country and name
+- (v0.2.0): add distance function
+- (v0.1.0): reverse geocoding function
 
 ## Compile, test and try
 
@@ -51,17 +58,31 @@ defp deps do
 end
 ```
 
+## Database rebuilding
+
+An escript allows to rebuild your `cities.txt` data from geonames. It will fetch the last version of `cities500.zip`, unzip it, filter out city with too low population, and build continent name. It will generate a `cities.txt.new` file. Existing `citiers.txt` will not be erased.
+
+```
+> ./scripts/cities_builder.escript
+```
+
+If you want to replace your `cities.txt`, add `--replace` parameter. Old `cities.txt` will be renamed to `cities.txt.old`.
+
+```
+> ./scripts/cities_builder.escript --replace
+```
+
 ## Technical information
 
 ### Algorithm
 
 Reverse geocoding is done thanks to a k-d tree algorithm. We use Martin F. Krafft implementation. Original source code is here: https://github.com/kbranigan/libkdtree/tree/master/kdtree%2B%2B . It is embeded in an erlang driver.
 
-From latitude/longitude coordinates, geocoding finds the nearest point in our locations database. Associated data are returned, as weel as a distance between provided coordinates and real coordinates. Since reverse geocoding relies only on coordinates, strange behaviour may occured when a big city is near a small one: a point inside the large city and near its border may be associated to the small city because the small city coordinates will be nearest than the big city coordinates.
+From latitude/longitude coordinates, geocoding finds the nearest point in our locations database. Associated data are returned, as well as a distance between provided coordinates and real coordinates. Since reverse geocoding relies only on coordinates, strange behaviour may occured when a big city is near a small one: a point inside the big city and near its border may be associated to the small city because the small city coordinates will be nearest than the big city coordinates.
 
 ### Data sources
 
-All locations data come from https://www.geonames.org database (http://download.geonames.org/export/dump/cities500.zip - 2021-03-15) :
+All locations data come from https://www.geonames.org database (http://download.geonames.org/export/dump/cities500.zip - 2021-03-27) :
 - Locations without population have been excluded.
 - Fields have been reduced to: geonameId, latitude, longitude, country code (ISO-3166), standard name. A 6th fields have been added between longitude and country code: continent. Each field is separated by a tabulation.
 
