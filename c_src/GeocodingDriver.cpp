@@ -30,6 +30,7 @@ struct TNode {
 
     // label
     string name;
+    int id;
     string continent;
     char country[2];
     
@@ -134,6 +135,7 @@ bool load_db(TKDTree& tree, const char* path) {
         read_string(&line, end, name, sizeof(name));
         
         TNode node(latitude, longitude);
+        node.id = id;
         node.country[0] = country_code[0];
         node.country[1] = country_code[1];
         node.name = string(name);
@@ -184,7 +186,7 @@ int main(int argc, char** argv) {
         TNode searchNode(latitude, longitude);
         const TNode& nearestNode = *tree.find_nearest(searchNode).first;
 
-        nb_bytes = snprintf(buffer, sizeof(buffer), "%f\t%s\t%c%c\t%s", nearestNode.haversine_distance(searchNode), nearestNode.continent.c_str(), nearestNode.country[0], nearestNode.country[1], nearestNode.name.c_str());
+        nb_bytes = snprintf(buffer, sizeof(buffer), "%f\t%d\t%s\t%c%c\t%s", nearestNode.haversine_distance(searchNode), nearestNode.id, nearestNode.continent.c_str(), nearestNode.country[0], nearestNode.country[1], nearestNode.name.c_str());
         buffer_size[0] = nb_bytes / 256;
         buffer_size[1] = nb_bytes & 0xFF;
         if (fwrite(buffer_size, sizeof(buffer_size), 1, stdout) != 1) {

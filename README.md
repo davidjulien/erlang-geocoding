@@ -1,12 +1,5 @@
 **Geocoding does not rely on any external API**. It relies on an internal (huge) database of 156710 coordinates corresponding to cities of more than 500 inhabitants (see `Data sources` for more details).
 
-## Release notes
-
-- (v0.3.1): add a script to rebuild `cities.txt` internal database with up-to-date data from https://geonames.org
-- (v0.3.0): lookup city information from country and name
-- (v0.2.0): add distance function
-- (v0.1.0): reverse geocoding function
-
 ## Compile, test and try
 
 Compilation:
@@ -30,7 +23,7 @@ Eshell V11.1.8  (abort with ^G)
 ok
 
 2> geocoding:reverse(48.857929, 2.346707).
-{ok,{europe,fr,<<"Paris">>,525.451956}}
+{ok,{2988507,europe,fr,<<"Paris">>,525.451956}}
 
 3> geocoding:distance({48.857929, 2.346707}, {40.7630463, -73.973527}).
 5832947
@@ -38,6 +31,9 @@ ok
 4> geocoding:lookup('FR', <<"paris">>).
 {ok,{2988507,{48.85341,2.3488},europe,'FR',<<"Paris">>}}
 ```
+
+`geocoding:reverse/2` returns the geoname id, continent name, country code (ISO 3166-1 alpha-2),
+city name, distance between city center and provided coordinates.
 
 ## Installation
 
