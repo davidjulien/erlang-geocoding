@@ -1,4 +1,5 @@
-**Geocoding does not rely on any external API**. It relies on an internal (huge) database of 156710 coordinates corresponding to cities of more than 500 inhabitants (see `Data sources` for more details).
+**Geocoding does not rely on any external API**.
+It relies on an internal (huge) database of 165,602 coordinates corresponding to cities of more than 500 inhabitants (see `Data sources` for more details).
 
 ## Compile, test and try
 
@@ -78,9 +79,12 @@ From latitude/longitude coordinates, geocoding finds the nearest point in our lo
 
 ### Data sources
 
-All locations data come from https://www.geonames.org database (http://download.geonames.org/export/dump/cities500.zip - 2021-03-27) :
+All locations data come from https://www.geonames.org database (http://download.geonames.org/export/dump/cities500.zip - 2024-12-05):
 - Locations without population have been excluded.
-- Fields have been reduced to: geonameId, latitude, longitude, country code (ISO-3166), standard name. A 6th fields have been added between longitude and country code: continent. Each field is separated by a tabulation.
+- PPLX (section of populated places) and PPLA5 (seat of a fifth-order administrative division) have been excluded.
+- Fields have been reduced to: geonameId, latitude, longitude, country code (ISO-3166), standard name.
+A 6th fields have been added between longitude and country code: continent.
+Each field is separated by a tabulation.
 
 Example:
 ```
