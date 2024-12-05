@@ -44,11 +44,13 @@ main(Parameters) ->
   end.
 
 analyze_line(Line) ->
-  [GeonameIdStr, NameStr, _AsciiNameStr, _AlternateNamesStr, LatitudeStr, LongitudeStr, _FeatureClassStr, _FeatureCodeStr, CountryCodeStr, _CountryCode2Str,
+  [GeonameIdStr, NameStr, _AsciiNameStr, _AlternateNamesStr, LatitudeStr, LongitudeStr, _FeatureClassStr, FeatureCodeStr, CountryCodeStr, _CountryCode2Str,
    _Admin1CodeStr, _Admin2CodeStr, _Admin3CodeStr, _Admin4CodeStr, PopulationStr, _ElevationStr, _DemStr, TimezoneStr, _ModificationDateStr] = string:split(Line, "\t", all),
   GeonameId = list_to_integer(GeonameIdStr),
   Population = list_to_integer(PopulationStr),
   if Population < 500 -> {0};
+     FeatureCodeStr == "PPLX" -> {0};
+     FeatureCodeStr == "PPLA5" -> {0};
      true ->
        Continent = to_continent(CountryCodeStr, TimezoneStr),
        {GeonameId, [GeonameIdStr, LatitudeStr, LongitudeStr, Continent, CountryCodeStr, NameStr]}

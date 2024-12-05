@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Add geoname id in the result of reverse geocoding
+- Rebuild `cities.txt` internal database with up-to-date data from https:/geonames.org
 
 ## [0.3.1] - 2021-03-27
 
