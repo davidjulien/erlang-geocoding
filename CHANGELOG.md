@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.4.0] - 2024-12-05
+
 ### Changed
 
 - Add geoname id in the result of reverse geocoding
@@ -37,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Reverse geocoding function
 
 
+[0.4.0] : https://github.com/davidjulien/erlang-geocoding/releases/tag/v0.4.0
 [0.3.1] : https://github.com/davidjulien/erlang-geocoding/releases/tag/v0.3.1
 [0.3.0] : https://github.com/davidjulien/erlang-geocoding/releases/tag/v0.3.0
 [0.2.0] : https://github.com/davidjulien/erlang-geocoding/releases/tag/v0.2.0
