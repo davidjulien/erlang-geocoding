@@ -191,7 +191,7 @@ terminate(_Reason, #state{port = Port}) ->
 %% ========================================================================= %%
 
 %% @doc Reverse latitude/longitude coordinates to continent/country/city and distance between provided coordinates and official cooordinates of identified location.
--spec do_reverse(port(), integer() | float(), integer() | float()) -> {continent(), country_iso3166(), unicode:unicode_binary(), float()}.
+-spec do_reverse(port(), integer() | float(), integer() | float()) -> {geonameid(), continent(), country_iso3166(), unicode:unicode_binary(), float()}.
 do_reverse(Port, Latitude, Longitude) ->
   LatitudeF = if
                 is_integer(Latitude) -> Latitude * 1.0;
@@ -219,8 +219,9 @@ do_reverse(Port, Latitude, Longitude) ->
          after
            ?PORT_TIMEOUT -> throw(timeout)
          end,
-  [DistanceStr, ContinentStr, <<CountryC1, CountryC2>>, NameStr] = re:split(Line, <<"\t">>, [unicode, {return, binary}]),
+  [DistanceStr, GeonameIdStr, ContinentStr, <<CountryC1, CountryC2>>, NameStr] = re:split(Line, <<"\t">>, [unicode, {return, binary}]),
   {
+   binary_to_integer(GeonameIdStr),
    binary_to_atom(ContinentStr,'utf8'),
    list_to_atom(string:to_lower([CountryC1, CountryC2])),
    NameStr,
