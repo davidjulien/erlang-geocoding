@@ -41,7 +41,7 @@ city name, distance between city center and provided coordinates.
 Erlang (`rebar3`):
 ```
 {deps, [
-  {geocoding, "0.3.0"}}
+  {geocoding, "0.4.0"}}
 ]}
 ```
 
@@ -50,7 +50,7 @@ Elixir (`mix`):
 ```
 defp deps do
   [
-    {:geocoding, "~> 0.3.0"}
+    {:geocoding, "~> 0.4.0"}
   ]
 end
 ```
